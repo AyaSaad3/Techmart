@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default async function Allorders() {
     const userInfo = await apiServices.getUserInfo()
-    const orders = await apiServices.getUserOrders(userInfo.decoded.id)    
+    const orders = await apiServices.getUserOrders(userInfo.decoded.id)        
 
     return (
         <div>

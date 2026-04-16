@@ -1,6 +1,7 @@
-import { IBrand } from "../IBrand";
-import { ICategory } from "../ICategory";
-import { ISubCategory } from "../ISubCategory";
+import { IBrand } from "../product/IBrand";
+import { ICategory } from "../product/ICategory";
+import { ISubCategory } from "../product/ISubCategory";
+
 
 export interface CartProduct {
     count: number;

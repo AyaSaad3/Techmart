@@ -2,7 +2,7 @@
 
 import apiServices from "@/services/api";
 import { SessionProvider } from "next-auth/react";
-import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 
 export const cartContext = createContext<{ cartCount: number; setCartCount: Dispatch<SetStateAction<number>>; isLoading: boolean }>({
     cartCount: 0,
@@ -22,7 +22,7 @@ export default function CartContextProvider({ children }: { children: ReactNode 
         setIsLoading(false);
     }
 
-    useState(() => {
+    useEffect(() => {
         getCart();
     }, []);
 

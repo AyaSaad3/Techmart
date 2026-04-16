@@ -9,15 +9,15 @@ import { useForm } from 'react-hook-form'
 import { AddAddress } from '@/interfaces/addess/AddAddress'
 
 export default function AddressForm({ onAddressAdded, onClose }: {
-    onAddressAdded: (data: AddressResponse) => void; onClose: () => void
+    onAddressAdded?: (data: AddressResponse) => void; onClose?: () => void
 }) {
 
     const { register, handleSubmit, reset } = useForm<AddAddress>()
     
     async function addAddress(data: AddAddress) {
         const response = await apiServices.addAddress(data);
-        onAddressAdded(response)
-        onClose()
+        onAddressAdded?.(response)
+        onClose?.()
         reset()
     }
 

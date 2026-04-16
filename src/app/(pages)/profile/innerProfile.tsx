@@ -122,7 +122,7 @@ export default function InnerProfile({ address }: { address: AddressResponse }) 
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {innerAddress.data.map((addr) => (
-                        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-200 group">
+                        <div key={addr._id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all duration-200 group">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex items-start gap-4 flex-1">
                                     <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 transition-colors">

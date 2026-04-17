@@ -122,7 +122,7 @@ class ApiServices {
         return data;
     }
 
-    async getUserOrders(userId: string, token: string): Promise<Order> {
+    async getUserOrders(userId: string, token: string): Promise<Order[]> {
         const response = await fetch(this.#BASE_URL + "/api/v1/orders/user/" + userId, {
             headers: this.#authHeaders(token),
         })

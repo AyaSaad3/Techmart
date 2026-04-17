@@ -7,15 +7,19 @@ import apiServices from '@/services/api'
 import { AddressResponse } from '@/interfaces/addess/AddressResponse'
 import { useForm } from 'react-hook-form'
 import { AddAddress } from '@/interfaces/addess/AddAddress'
+import { useSession } from 'next-auth/react'
 
 export default function AddressForm({ onAddressAdded, onClose }: {
     onAddressAdded?: (data: AddressResponse) => void; onClose?: () => void
 }) {
 
     const { register, handleSubmit, reset } = useForm<AddAddress>()
+
+    const session = useSession()
+    const token = session.data?.user.token 
     
     async function addAddress(data: AddAddress) {
-        const response = await apiServices.addAddress(data);
+        const response = await apiServices.addAddress(data, token ?? "");
         onAddressAdded?.(response)
         onClose?.()
         reset()

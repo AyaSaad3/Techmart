@@ -5,6 +5,7 @@ import { IProduct } from '@/interfaces/product/IProduct';
 import { formatPrice } from '@/lib/utils';
 import apiServices from '@/services/api';
 import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
@@ -17,9 +18,12 @@ export default function ProductCard({ product }: { product: IProduct }) {
 
     const { setCartCount } = useContext(cartContext);
 
+    const session = useSession()
+    const token = session.data?.user.token  
+
     const handleAddToCart = async () => {
         setIsLoading(true);
-        const response = await apiServices.addProductToCart(product._id);
+        const response = await apiServices.addProductToCart(product._id, token?? "");
         setCartCount(response.numOfCartItems);
         toast.success(response.message, {
             style: {
@@ -31,7 +35,7 @@ export default function ProductCard({ product }: { product: IProduct }) {
 
     async function addToWishlist() {
         setIsAdding(product._id)
-        await apiServices.addProductToWishlist(product._id);
+        await apiServices.addProductToWishlist(product._id, token ?? "");
         setIsFavorite(!isFavorite)
         setIsAdding(null)
     }

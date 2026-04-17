@@ -7,15 +7,19 @@ import { WishlistResponse } from "@/interfaces/wishlist/WishlistResponse";
 import apiServices from "@/services/api";
 import { useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function WishlistCart({ product }: { product: WishlistResponse }) {
 
     const [cart, setCart] = useState<WishlistResponse>(product);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
+    const session = useSession()
+    const token = session.data?.user.token 
+
     async function removeProduct(productId: string) {
             setIsDeleting(productId)
-            await apiServices.removeProductFromWishlist(productId)
+        await apiServices.removeProductFromWishlist(productId, token?? "")
             setCart((prev) => ({
                 ...prev,
                 count: prev.count - 1,

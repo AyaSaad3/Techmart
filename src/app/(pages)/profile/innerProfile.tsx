@@ -16,6 +16,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import AddressForm from "@/components/AddressForm";
+import { useSession } from "next-auth/react";
 
 export default function InnerProfile({ address }: { address: AddressResponse }) {
 
@@ -23,9 +24,12 @@ export default function InnerProfile({ address }: { address: AddressResponse }) 
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
 
+    const session = useSession()
+    const token = session.data?.user.token
+
     async function removeAddress(addressId: string) {
         setIsDeleting(addressId);
-        const response = await apiServices.removeAddress(addressId);
+        const response = await apiServices.removeAddress(addressId, token ?? "");
         setInnerAddress(response);
         setIsDeleting(null);
     }
@@ -58,10 +62,31 @@ export default function InnerProfile({ address }: { address: AddressResponse }) 
                     <p className="mb-8 text-muted-foreground">
                         Add your first delivery address to make checkout faster and easier.
                     </p>
-                    <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white bg-indigo-600 font-semibold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/25">
-                        <Plus size={20} />
-                        Add Your First Address
-                    </button>
+                    
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white bg-indigo-600 font-semibold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/25">
+                                <Plus size={20} />
+                                Add Your First Address
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-sm [&>button]:h-12 [&>button]:w-12">
+                            <DialogHeader className="text-left">
+                                <DialogTitle className="font-bold text-xl">Add New Address</DialogTitle>
+                            </DialogHeader>
+
+                            <div className="pt-2">
+                                <AddressForm onAddressAdded={setInnerAddress} onClose={() => setOpen(false)} />
+                            </div>
+
+                            <DialogFooter className="border-0 bg-white grid grid-cols-2">
+                                <DialogClose asChild>
+                                    <Button className="text-[16px] py-5" variant="outline">Cancel</Button>
+                                </DialogClose>
+                                <Button className="bg-indigo-500 hover:bg-indigo-700 text-[16px] py-5 transform" type="submit" form="add-address-form">Add Address</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </section>
         );

@@ -4,8 +4,10 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar/Navbar";
 import Footer from "@/components/layout/Footer/Footer";
 import { Toaster } from "@/components/ui/sonner"
-import CartContextProvider from "@/contexts/cartContext";
 import apiServices from "@/services/api";
+import Providers from "@/providers/providers";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +30,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const userInfo = await apiServices.getUserInfo();
-  const userName = userInfo.decoded.name;
+  const session = await getServerSession(authOptions)
+  const userName = session?.user.name ?? "";
 
   return (
     <html
@@ -37,10 +39,10 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartContextProvider>
+        <Providers>
           <Navbar userName={userName} />
           <div className="mt-17">{children}</div>
-        </CartContextProvider>
+        </Providers>
         <Toaster />
         <Footer />
       </body>

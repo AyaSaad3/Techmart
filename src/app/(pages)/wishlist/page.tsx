@@ -1,10 +1,15 @@
 import Link from "next/link";
 import WishlistCart from "./wishlistCart";
 import apiServices from "@/services/api";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function Wishlist() {
 
-  const product = await apiServices.getWishlist()
+  const session = await getServerSession(authOptions)
+  const token = session?.user?.token
+
+  const product = await apiServices.getWishlist(token ?? "")
 
   return (
     <div className="relative bg-cover py-8">

@@ -1,12 +1,18 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { formatPrice } from '@/lib/utils'
 import apiServices from '@/services/api'
+import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 
 export default async function Allorders() {
-    const userInfo = await apiServices.getUserInfo()
-    const orders = await apiServices.getUserOrders(userInfo.decoded.id)        
+
+    const session = await getServerSession(authOptions)
+    const token = session?.user?.token
+
+    const userInfo = await apiServices.getUserInfo(token?? "")
+    const orders = await apiServices.getUserOrders(userInfo.decoded.id, token ?? "")        
 
     return (
         <div>

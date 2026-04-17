@@ -12,6 +12,7 @@ import { AddToCartResponse } from '@/interfaces/cart/AddToCartResponse'
 import { formatPrice } from '@/lib/utils'
 import { Address } from '@/interfaces/addess/Address'
 import AddressForm from '@/components/AddressForm'
+import { useSession } from 'next-auth/react'
 
 export default function InnerCheckout({ cart, address }: { cart: AddToCartResponse; address: Address[] }) {
     const [step, setStep] = useState(1)
@@ -22,9 +23,12 @@ export default function InnerCheckout({ cart, address }: { cart: AddToCartRespon
     const [checkoutLoading, setCheckoutLoading] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
 
+    const session = useSession()
+    const token = session.data?.user.token  
+
     async function handleCheckout() {
         setCheckoutLoading(true);
-        const response = await apiServices.checkout(cart.cartId);
+        const response = await apiServices.checkout(cart.cartId, token?? "");
         setCheckoutLoading(false);
         location.href = response.session.url;
     }

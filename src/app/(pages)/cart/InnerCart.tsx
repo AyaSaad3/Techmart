@@ -10,6 +10,7 @@ import apiServices from "@/services/api";
 import Link from "next/link";
 import CartProduct from "@/components/CartProduct";
 import { cartContext } from "@/contexts/cartContext";
+import { useSession } from "next-auth/react";
 
 const ShoppingCart = ({ cart }: { cart: AddToCartResponse }) => {
 
@@ -17,24 +18,27 @@ const ShoppingCart = ({ cart }: { cart: AddToCartResponse }) => {
     const [isClearing, setIsClearing] = useState(false);
     const { setCartCount } = useContext(cartContext);
 
+    const session = useSession()
+    const token = session.data?.user.token  
+
     useEffect(() => {
         setCartCount(innerCart.numOfCartItems);
     }, [innerCart])
 
     async function removeItem(productId: string) {
-        const response = await apiServices.removeProductFromCart(productId);
+        const response = await apiServices.removeProductFromCart(productId, token?? "");
         setInnerCart(response);
     }
 
     async function clearCart() {
         setIsClearing(true);
-        const response = await apiServices.clearCart();
+        const response = await apiServices.clearCart(token?? "");
         setInnerCart(response);
         setIsClearing(false);
     }
 
     async function updateProductCount(productId: string, count: number) {
-        const response = await apiServices.updateProductCount(productId, count);
+        const response = await apiServices.updateProductCount(productId, count, token?? "");
         setInnerCart(response);
     }
 

@@ -15,7 +15,12 @@ class ApiServices {
     #BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
     #headers = {
         "Content-Type": "application/json",
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk4MzE3YjhhMjA2MmNhZmVjZWE0YiIsIm5hbWUiOiJBeWEiLCJyb2xlIjoidXNlciIsImlhdCI6MTc3NTg2MjU1MiwiZXhwIjoxNzgzNjM4NTUyfQ.8UsY4v8SZdKpzXQktIbjRvvt9WqCaxLAoW50g5RAXQ4"
+    }
+    #authHeaders(token: string) {
+        return {
+            "Content-Type": "application/json",
+            token,
+        }
     }
     async getProducts(): Promise<IProduct[]> {
         const response = await fetch(this.#BASE_URL + "/api/v1/products")
@@ -41,52 +46,50 @@ class ApiServices {
         return product
     }
 
-    async addProductToCart(productId: string): Promise<AddToCartResponse> {
+    async addProductToCart(productId: string, token: string): Promise<AddToCartResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v2/cart", {
             body: JSON.stringify({ productId }),
             method: "post",
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
-        console.log(data);
-
         return data;
     }
 
-    async getCart(): Promise<AddToCartResponse> {
+    async getCart(token: string): Promise<AddToCartResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v2/cart", {
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
         return data;
     }
 
-    async removeProductFromCart(productId: string): Promise<AddToCartResponse> {
+    async removeProductFromCart(productId: string, token: string): Promise<AddToCartResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v2/cart/" + productId, {
             method: "delete",
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
         return data;
     }
 
-    async clearCart(): Promise<AddToCartResponse> {
+    async clearCart(token: string): Promise<AddToCartResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v2/cart", {
             method: "delete",
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
         return data;
     }
 
-    async updateProductCount(productId: string, count: number): Promise<AddToCartResponse> {
+    async updateProductCount(productId: string, count: number, token: string): Promise<AddToCartResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v2/cart/" + productId, {
             method: "put",
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
             body: JSON.stringify({ count })
         })
 
@@ -94,7 +97,7 @@ class ApiServices {
         return data;
     }
 
-    async checkout(cardId: string) {
+    async checkout(cardId: string, token: string) {
         const response = await fetch(this.#BASE_URL + "/api/v1/orders/checkout-session/" + cardId + "?url=http://localhost:3000", {
             body: JSON.stringify({
                 "shippingAddress": {
@@ -103,7 +106,7 @@ class ApiServices {
                     "city": "Cairo"
                 }
             }),
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
             method: "post"
         })
 
@@ -111,76 +114,74 @@ class ApiServices {
         return data;
     }
 
-    async getUserInfo(): Promise<VerifyTokenResponse> {
+    async getUserInfo(token: string): Promise<VerifyTokenResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/auth/verifyToken", {
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
         })
         const data = await response.json()
         return data;
     }
 
-    async getUserOrders(userId: string): Promise<Order[]> {
+    async getUserOrders(userId: string, token: string): Promise<Order> {
         const response = await fetch(this.#BASE_URL + "/api/v1/orders/user/" + userId, {
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
         })
 
         const data = await response.json()
         return data;
     }
 
-    async getWishlist(): Promise<WishlistResponse> {
+    async getWishlist(token: string): Promise<WishlistResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/wishlist", {
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
         })
         const data = await response.json()
         return data;
     }
 
-    async removeProductFromWishlist(productId: string): Promise<WishlistResponse> {
+    async removeProductFromWishlist(productId: string, token: string): Promise<WishlistResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/wishlist/" + productId, {
             method: "delete",
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
         return data;
     }
 
-    async addProductToWishlist(productId: string): Promise<WishlistResponse> {
+    async addProductToWishlist(productId: string, token: string): Promise<WishlistResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/wishlist", {
             body: JSON.stringify({ productId }),
             method: "post",
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
-        console.log(data);
-
         return data;
     }
 
-    async getUserAdreesses(): Promise<AddressResponse> {
+    async getUserAdreesses(token: string): Promise<AddressResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/addresses", {
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
         })
         const data = await response.json()
         return data;
     }
 
-    async removeAddress(addressId: string): Promise<AddressResponse> {
+    async removeAddress(addressId: string, token: string): Promise<AddressResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/addresses/" + addressId, {
             method: "delete",
-            headers: this.#headers,
+            headers: this.#authHeaders(token),
         })
         const data = await response.json()
         return data;
     }
 
-    async addAddress(addressInfo: AddAddress): Promise<AddressResponse> {
+    async addAddress(addressInfo: AddAddress, token: string): Promise<AddressResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/addresses", {
             body: JSON.stringify(addressInfo),
             method: "post",
-            headers: this.#headers
+            headers: this.#authHeaders(token)
         })
 
         const data = await response.json()
@@ -199,7 +200,7 @@ class ApiServices {
         const data = await response.json()
         return data;
     }
-
+    
     async signUp(data: SignUpData): Promise<SignInResponse> {
         const response = await fetch(this.#BASE_URL + "/api/v1/auth/signup", {
             method: "post",

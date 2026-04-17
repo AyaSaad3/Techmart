@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { formatPrice } from '@/lib/utils';
 import { cartContext } from '@/contexts/cartContext';
 import { IProduct } from '@/interfaces/product/IProduct';
+import { useSession } from 'next-auth/react';
 
 export default function ProductDetails({ product, products }: { product: IProduct; products: IProduct[] }) {
     const [selectedImage, setSelectedImage] = useState(0);
@@ -21,10 +22,13 @@ export default function ProductDetails({ product, products }: { product: IProduc
     const [isAdding, setIsAdding] = useState(false);
 
     const { setCartCount } = useContext(cartContext);
+
+    const session = useSession()
+    const token = session.data?.user.token    
  
     async function addToCart() {
         setIsLoading(true);
-        const response = await apiServices.addProductToCart(product._id);
+        const response = await apiServices.addProductToCart(product._id, token?? "");
         setCartCount(response.numOfCartItems);
         setIsLoading(false);
         
@@ -37,7 +41,7 @@ export default function ProductDetails({ product, products }: { product: IProduc
 
     async function addToWishlist() {
         setIsAdding(true)
-        await apiServices.addProductToWishlist(product._id);
+        await apiServices.addProductToWishlist(product._id, token ?? "");
         setIsWishlisted(!isWishlisted)
         setIsAdding(false)
     }

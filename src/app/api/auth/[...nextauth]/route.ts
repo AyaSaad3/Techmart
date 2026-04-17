@@ -1,8 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials"
-import NextAuth from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import apiServices from "@/services/api"
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -54,6 +54,8 @@ const handler = NextAuth({
         }
     },
     secret: process.env.AUTH_SECRET
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }
